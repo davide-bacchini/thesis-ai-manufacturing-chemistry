@@ -1,0 +1,34 @@
+# Credentials
+.env
+*.key
+*.pem
+credentials*.json
+service-account*.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+_pydeps_vertex_pipeline/
+
+# OS files
+.DS_Store
+__MACOSX/
+
+# Large/private data excluded from GitHub
+job_postings/pre_processed/*.xlsx
+job_postings/processed/*.xlsx
+annual_reports/*.pdf
+hiring_reports/reports/*.pdf
+final_reports/*.pdf
+benchmark/data/*.pdf
+benchmark/output_public_url/**
+benchmark/results/*.xlsx
+rag/data/*.pdf
+rag/index/**
+
+# Logs and generated artifacts
+*.log
+pipeline_summary_*.csv
+last_bad_gemini_json*.txt
