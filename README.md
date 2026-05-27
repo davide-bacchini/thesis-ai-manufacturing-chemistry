@@ -1,7 +1,5 @@
 # Thesis code repository
 
-This repository contains the scripts used for the thesis pipeline. Data files, generated reports, benchmark outputs, and vector indexes are kept local and are not required for the code structure itself.
-
 ## What is included
 
 - `hiring_reports/report_generation.py` classifies job postings and generates hiring reports.
