@@ -114,5 +114,3 @@ Run the Gradio interface:
 ```bash
 python rag/gradio_app.py
 ```
-
-The repository no longer includes Streamlit, CLI, Ollama, or separate local chatbot interfaces. Retrieval is local, while answer generation in `gradio_app.py` uses Vertex AI Gemini.
