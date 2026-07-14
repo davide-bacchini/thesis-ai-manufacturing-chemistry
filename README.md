@@ -1,10 +1,12 @@
 # Mapping AI Capability Building from Public Company Data
 
-Large industrial companies rarely disclose in detail what they are building with AI. Annual reports describe strategy, but they often stay high level. Job postings are more concrete: they show which teams companies are hiring for, which skills they need, and where new capabilities may be forming.
+Large industrial companies rarely disclose in detail what they are building with AI. Annual reports describe strategy, but they often stay high level, while internal projects are usually not visible from the outside.
 
-This project turns those public signals into structured company intelligence.
+I developed a RAG chatbot that helps R&D managers, strategy teams, and analysts ask questions about what AI capabilities industrial companies appear to be developing, which business areas they relate to, and whether those signals are supported by public evidence.
 
-I built a pipeline that analyzes 91,544 job postings from 16 global manufacturing and chemistry groups, combines them with annual reports and public sources, and produces company reports that can be searched and compared.
+The chatbot is built on evaluated company reports. To create them, I built a pipeline that starts from job postings available for each company, classifies them by technical relevance and business area, extracts the capabilities each company appears to be building, and then searches public sources such as annual reports, investor material, company pages, press releases, and interviews to support or contextualize those findings.
+
+The analysis covers 91,544 job postings from 16 global manufacturing and chemistry groups.
 
 BSc Thesis, Bocconi University, 2026. [📄 Full thesis (PDF)](./thesis.pdf)
 
@@ -22,11 +24,13 @@ The pipeline starts from raw job descriptions and extracts structured signals ab
 
 These signals are grouped by company to identify patterns in hiring, geography, seniority, and business focus.
 
-The goal is not to claim that every capability is already deployed. The goal is to understand where companies are investing, based on visible external evidence.
+The key output is a map of visible capability building. The pipeline does not assume that a capability is already deployed only because a company is hiring for it. Instead, job postings are treated as a first signal of where the company is investing talent and technical resources.
 
 ## From hiring signals to company reports
 
-For each company, the pipeline produces a structured report that connects three types of evidence:
+For each company, the pipeline first identifies the strongest capability signals from core technical roles. These signals are then used to guide the search for supporting evidence in public sources.
+
+The company report connects three types of evidence:
 
 | Source | Role in the analysis |
 | :-- | :-- |
@@ -34,7 +38,7 @@ For each company, the pipeline produces a structured report that connects three 
 | Annual reports | Show strategic priorities and management narrative |
 | Public sources | Add evidence from company pages, press releases, interviews, and investor material |
 
-The final reports describe which AI related capabilities are visible for each company, where they appear in the organization, and how they relate to the company's public strategy.
+The final reports explain which AI capabilities are visible for each company, which business areas they relate to, and whether public sources provide evidence that the company is actually discussing, investing in, or deploying similar technologies.
 
 Examples of capability areas include predictive maintenance, industrial automation, demand forecasting, materials research, supply chain analytics, and connected product services.
 
@@ -61,11 +65,13 @@ Across the evaluated reports:
 | Grounding accuracy | 72.4% |
 | Strict support rate | 59.6% |
 
-This step makes the reports more useful as external intelligence rather than simple generated summaries.
+This step makes the reports more useful as evidence based company analysis rather than simple generated summaries.
 
-## Searchable company intelligence
+## Searchable company reports
 
-The evaluated company reports are indexed in a chatbot, so they can be queried in natural language.
+The evaluated company reports are indexed in a RAG chatbot, so users can query them in natural language.
+
+The chatbot helps R&D managers and strategy teams understand what type of AI capabilities a company appears to be developing, which technologies are connected to specific business areas, and how different firms compare across manufacturing, R&D, supply chain, operations, and customer facing activities.
 
 Example questions:
 
