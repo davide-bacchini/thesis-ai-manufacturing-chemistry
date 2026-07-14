@@ -1,116 +1,148 @@
-# Thesis code repository
+# An Overview of Modern AI Systems in Manufacturing and Chemistry
 
-## What is included
+**Master's Thesis** — Davide Bacchini | Bocconi University | Supervised by Prof. Biggio
 
-- `hiring_reports/report_generation.py` classifies job postings and generates hiring reports.
-- `research_agent/run_google_deepsearch.py` expands hiring evidence with annual reports and public sources.
-- `benchmark/scripts/` contains the public source grounding benchmark and metric scripts.
-- `rag/build_index.py` builds the retrieval index from evaluated company reports.
-- `rag/gradio_app.py` is the only chatbot interface kept in the repository.
-- `rag/rag_core.py` contains shared indexing and retrieval utilities used by the index builder and the Gradio app.
-- `.env.example` lists the environment variables needed to run the scripts.
-- `requirements.txt` lists the Python dependencies.
+�� **[Read the full thesis (PDF)](./thesis.pdf)**
 
-## Setup
+---
 
-Create a virtual environment and install dependencies.
+## What This Thesis Is About
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+Companies in manufacturing and chemistry are adopting AI across their operations — from predictive maintenance and quality control to materials discovery and digital twins. But understanding *what a specific company is actually doing with AI* is hard: academic papers show technical possibilities, not corporate reality. Internal programs, hiring decisions, and actual deployments remain hidden in fragmented public data.
+
+This thesis tackles that problem in two parts:
+
+1. **Literature review** — A structured overview of how LLMs, RAG, and Agentic AI are being applied in manufacturing and chemistry, from process monitoring to autonomous laboratories.
+
+2. **Empirical analysis** — A working LLM pipeline that processes 91,544 job postings from 16 major firms (Michelin, Bridgestone, BASF, Adient, etc.), extracts AI investment signals, enriches them with annual reports and public sources via a research agent, and produces evaluated company reports queryable through a RAG chatbot.
+
+---
+
+## Business Impact: What Problem This Solves
+
+Traditional competitive intelligence in industrial sectors relies on manual desk research — reading annual reports, tracking press releases, browsing job boards. This is slow, incomplete, and doesn't scale.
+
+**This thesis demonstrates that:**
+
+- Job postings are reliable predictors of what companies are building internally (hiring = investment signal)
+- An LLM pipeline can automatically classify 91K+ postings by AI relevance, business area, and capability type
+- A research agent can expand hiring signals with public evidence (press releases, interviews, investor comms) into structured company reports
+- Those reports can be evaluated for factual grounding (72.4% grounding accuracy across 392 claims) and served via a RAG chatbot for natural language queries
+
+**The result:** Instead of weeks of manual research per company, the pipeline produces evaluated intelligence reports in hours — each one telling you what AI capabilities a firm is building, where they're hiring, and what their strategic priorities appear to be.
+
+---
+
+## Technical Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  1. DATA COLLECTION                                              │
+│  TheirStack API → 91,544 job postings (2022–present)             │
+│  16 firms × NACE sectors 22.11, 22.19, 29.32                    │
+└───────────────────────────┬──────────────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────────────┐
+│  2. LLM CLASSIFICATION (Gemini 3 Flash Preview)                  │
+│  For each job description → structured JSON:                     │
+│    • primary_category (AI/ML, LLM/GenAI, Agentic, etc.)          │
+│    • business_area (manufacturing, materials R&D, IT, etc.)      │
+│    • technical_relevance_score (0 / 1 / 2)                       │
+│    • technical_signals (tools, platforms, skills)                 │
+│    • investment_signal (what AI capability is being built)        │
+└───────────────────────────┬──────────────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────────────┐
+│  3. HIRING REPORT GENERATION                                     │
+│  Per company: trend, geography, seniority, capability pockets    │
+│  → Investment signals grouped into capability areas              │
+└───────────────────────────┬──────────────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────────────┐
+│  4. RESEARCH AGENT (Google deep-research-preview-04-2026)        │
+│  Hiring report + Annual report → Web search for public evidence  │
+│  → Final company report with 4 sections:                         │
+│    • Quantitative investment baseline                            │
+│    • Capability-by-capability analysis (incl. GenAI & Agentic)   │
+│    • Talent, teams, and operating model                          │
+│    • Investment priorities and competitor monitoring              │
+└───────────────────────────┬──────────────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────────────┐
+│  5. EVALUATION BENCHMARK                                         │
+│  Extract claims → Crawl cited URLs → TF-IDF selection            │
+│  → LLM judge (gemini-3.1-pro) assigns:                          │
+│    supported / needs_review / unsupported / not_verifiable       │
+│  Metrics: Grounding accuracy, Strict support rate, etc.          │
+└───────────────────────────┬──────────────────────────────────────┘
+                            │
+┌───────────────────────────▼──────────────────────────────────────┐
+│  6. RAG CHATBOT                                                  │
+│  Reports embedded with multilingual-e5-small → Vector index      │
+│  Natural language queries about companies, technologies, trends  │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
-Copy the environment template and fill in your own values.
+---
 
-```bash
-cp .env.example .env
+## Key Results
+
+| Metric | Value |
+|--------|-------|
+| Job postings processed | 91,544 |
+| Companies analyzed | 16 |
+| Public URL claims evaluated | 392 |
+| Grounding accuracy | 72.4% |
+| Strict support rate | 59.6% |
+| Unsupported rate | 14.7% |
+| Verifiability rate | 74.5% |
+
+---
+
+## Sectors & Companies Analyzed
+
+**NACE sectors:** 22.11 (rubber tyres), 22.19 (other rubber products), 29.32 (motor vehicle parts)
+
+**Companies include:** Michelin, Bridgestone, BASF, Adient, BorgWarner, Dana, Trelleborg, Continental, and others — all matched to their global corporate group for worldwide hiring coverage.
+
+---
+
+## Technologies Covered in the Review
+
+| Technology | Industrial Application |
+|---|---|
+| CNNs | Visual quality control, defect detection |
+| GNNs | Molecular property prediction, materials discovery (GNoME) |
+| Hybrid models | Digital twins, process optimization |
+| LLMs | Safety chatbots, Text-to-CAD, material property prediction |
+| RAG | SOP generation, machine manuals Q&A, MOF design |
+| Agentic AI | Self-driving labs, autonomous reaction optimization, plant diagnostics |
+
+---
+
+## How to Use
+
+The thesis PDF contains the full analysis, methodology, and results. The pipeline code used for the empirical analysis is not included in this repository (proprietary data sources), but the architecture and prompts are fully described in Chapter 3.
+
+To replicate or extend:
+1. Obtain job posting data (e.g., from TheirStack or similar platforms)
+2. Use the classification schema described in Section 3.2 with any capable LLM
+3. Apply the evaluation benchmark (Section 3.3) to verify report quality
+4. Index reports in any RAG framework (the thesis used multilingual-e5-small embeddings)
+
+---
+
+## Citation
+
+If you reference this work, please cite:
+
+```
+Bacchini, D. (2025). An Overview of Modern AI Systems in Manufacturing and Chemistry.
+Master's Thesis, Bocconi University. Supervised by Prof. Biggio.
 ```
 
-Do not commit `.env`. It is ignored by `.gitignore`.
+---
 
-To check the local setup, run:
+## License
 
-```bash
-python scripts/check_setup.py
-```
-
-## Expected local folder structure
-
-```text
-job_postings/
-  pre_processed/          # input Excel files, one workbook per company
-  processed/              # enriched Excel outputs created by the hiring script
-annual_reports/           # annual reports used by the research agent
-hiring_reports/
-  reports/                # generated hiring reports
-final_reports/            # generated final company reports
-benchmark/
-  data/                   # final report PDFs copied here for benchmarking
-  output_public_url/      # raw benchmark outputs
-  results/                # summary Excel files
-rag/
-  data/                   # evaluated final report PDFs indexed by the RAG system
-  index/                  # generated vector index
-```
-
-## Pipeline order
-
-### 1. Job posting classification and hiring reports
-
-Place one Excel file per company in `job_postings/pre_processed/`. Then run:
-
-```bash
-python hiring_reports/report_generation.py
-```
-
-The script reads from `job_postings/pre_processed/`, writes enriched workbooks to `job_postings/processed/`, and writes hiring reports under `hiring_reports/reports/`. It treats job postings as hiring evidence, not as proof of deployment, spending, headcount, or production maturity.
-
-### 2. Research agent for final company reports
-
-The research agent combines one hiring report with one annual report and searches additional public sources. Example:
-
-```bash
-python research_agent/run_google_deepsearch.py   --annual-report annual_reports/Company_Annual_Report.pdf   --hiring-report hiring_reports/reports/company/company_macro_ai_hiring_report.pdf   --company "Company Name"   --output-dir final_reports
-```
-
-The generated report includes inline numbered citations and a final `SOURCES` section. That source list is required by the public URL benchmark.
-
-The script requires either `GEMINI_API_KEY` or `GOOGLE_API_KEY`, unless it has been adapted to another authentication flow.
-
-### 3. Public URL grounding benchmark
-
-Copy the final report PDFs to `benchmark/data/`, then run:
-
-```bash
-python benchmark/scripts/run_missing_public_url_benchmark.py   --data-dir benchmark/data   --out-dir benchmark/output_public_url
-```
-
-The benchmark uses Crawl4AI as the first extraction method for web pages, with PDF extraction and text fallback methods when needed. Its default judge model is controlled by `BENCHMARK_MODEL`, which is set to `gemini-3.1-pro-preview` in `.env.example`.
-
-Then create the comparison file:
-
-```bash
-python benchmark/scripts/make_public_url_metrics.py   --out-dir benchmark/output_public_url   --output-file benchmark/results/public_url_metrics_comparison.xlsx
-```
-
-Then compute the final grounding metrics:
-
-```bash
-python benchmark/scripts/compute_public_grounding_metrics.py   --input benchmark/results/public_url_metrics_comparison.xlsx   --output benchmark/results/public_grounding_metrics.xlsx
-```
-
-### 4. Gradio RAG chatbot
-
-Copy evaluated final reports to `rag/data/`, then build the local retrieval index:
-
-```bash
-python rag/build_index.py --data-dir rag/data --index-dir rag/index
-```
-
-Run the Gradio interface:
-
-```bash
-python rag/gradio_app.py
-```
+This thesis is shared for academic and educational purposes.
