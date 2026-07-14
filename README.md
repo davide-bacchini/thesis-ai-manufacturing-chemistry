@@ -1,6 +1,6 @@
 # AI in Manufacturing and Chemistry — BSc Thesis
 
-BSc Thesis, Bocconi University, 2025.
+BSc Thesis, Bocconi University, 2026.
 
 [📄 Full thesis PDF](./thesis.pdf)
 
