@@ -8,8 +8,6 @@ The chatbot is built on evaluated company reports. To create them, I built a pip
 
 The analysis covers 91,544 job postings from 16 global manufacturing and chemistry groups.
 
-BSc Thesis, Bocconi University, 2026. [📄 Full thesis (PDF)](./thesis.pdf)
-
 ## What the pipeline does
 
 The pipeline starts from raw job descriptions and extracts structured signals about:
