@@ -35,7 +35,7 @@ The objective is to understand from publicly available data what companies in ma
 **Evaluation.** Each company report is evaluated for factual accuracy. The benchmark extracts every claim citing a public URL, crawls the cited source with Crawl4AI, selects the most relevant passages using TF-IDF similarity, and uses an LLM judge (Gemini Pro) to classify each claim as supported, needs_review, unsupported, or not_verifiable.
 
 <p align="center">
-  <img src="docs/evaluation-workflow.png" alt="Evaluation workflow" width="700">
+  <img src="./evaluation-workflow.png" alt="Evaluation workflow" width="700">
 </p>
 
 **RAG chatbot.** The evaluated reports are embedded with multilingual-e5-small and indexed so they can be queried in natural language to compare companies, technologies, and sector trends.
