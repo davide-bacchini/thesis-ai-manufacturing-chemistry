@@ -1,73 +1,77 @@
-# AI in Manufacturing and Chemistry — BSc Thesis
+# An Overview of Modern AI Systems in Manufacturing and Chemistry
 
 BSc Thesis, Bocconi University, 2026.
 
-[📄 Full thesis PDF](./thesis.pdf)
+[📄 Full thesis (PDF)](./thesis.pdf)
 
 ---
 
-## Summary
+## Abstract
 
-This thesis does two things:
+This thesis examines the evolution of Artificial Intelligence applications in manufacturing and chemistry, from earlier task specific systems to more recent approaches based on Large Language Models, Retrieval Augmented Generation, and agentic AI. These technologies can be applied across several phases before the final product creation, from research and production to quality control, maintenance, supply chain, and business operations.
 
-1. Reviews how AI (LLMs, RAG, Agentic AI) is used in manufacturing and chemistry today.
-2. Builds a pipeline that reads 91,544 job postings from 16 industrial firms, classifies them by AI relevance, and produces company reports on what each firm is building — then makes them queryable through a chatbot.
+The literature provides many examples of traditional applications, often related to specific stages of production. However, these sources usually focus on the overall sector or on high level technical applications, while they provide limited evidence on what specific companies are currently developing, especially for newer trends. This may happen because firms could avoid disclosing information that reveals a competitive advantage.
 
----
+For this reason, the empirical part relies on a pipeline to process public company data and understand from the outside what firms may be implementing. The analysis is based on 91,544 job postings from 16 companies, which are used as proxies for capability building, since their descriptions show which types of profiles and competences companies are looking for. Then, they are combined with annual reports, which provide evidence on investment priorities and reported initiatives. Both sources are expanded through a research agent, which is guided by the capabilities extracted from the job descriptions and searches for further public details online, including company pages, press releases, interviews, and investor communications.
 
-## The problem
-
-You can't easily tell what a specific company is doing with AI from the outside. Academic papers show what's technically possible. Annual reports are vague. Press releases are marketing.
-
-Job postings are different. When a company hires for "ML Engineer — predictive maintenance for tire manufacturing," that's a direct signal of what they're investing in.
+The analysis produces company reports that can be queried against a RAG chatbot and used to compare firms and their capabilities. Their factual claims are evaluated by an LLM judge against the cited public sources, after the references in each report have been extracted, mapped to the claims that use them, and retrieved as readable text.
 
 ---
 
-## What the pipeline does
+## Empirical analysis
 
-1. **Collects** 91,544 job postings from TheirStack (Workday, Indeed, LinkedIn) for 16 firms in rubber/automotive manufacturing
-2. **Classifies** each posting with Gemini Flash: AI relevance score, business area, capability type, technical signals
-3. **Generates hiring reports** per company (trend over time, geography, seniority, capability areas)
-4. **Expands** with a research agent that searches public sources (press releases, interviews) and combines with annual reports
-5. **Produces** a final company report per firm (investment baseline, capabilities, talent model, strategic priorities)
-6. **Evaluates** each report: extracts claims, crawls cited URLs, checks if claims are actually supported by the source
-7. **Indexes** reports in a RAG chatbot for natural language queries
+The objective is to understand from publicly available data what companies in manufacturing and chemistry are building with AI. The firms were identified from Orbis by filtering for very large European companies in three NACE sectors (22.11, 22.19, 29.32: rubber tyres, other rubber products, and motor vehicle parts). Each firm was matched to its global corporate group so the analysis covers worldwide hiring activity. From this group, 16 firms with at least 2,000 job postings each were identified in TheirStack, producing the final dataset of 91,544 records from 2022 to the present.
 
----
+### Pipeline
 
-## Results
+**Classification.** Each job description is processed by Gemini Flash, which returns a structured JSON with five fields: the type of role (business analytics, data engineering, AI/ML, agentic AI, etc.), the business area where the technology is applied (manufacturing, materials research, supply chain, etc.), a relevance score (0 = not AI related, 1 = adjacent, 2 = core AI role), the explicit technical tools mentioned, and an investment signal summarizing what the firm is trying to build.
 
-- 91,544 postings processed across 16 companies
-- 392 public-source claims evaluated
-- 72.4% grounding accuracy (claims supported by cited evidence)
-- 59.6% strict support rate
-- 14.7% unsupported rate
+**Hiring reports.** For each company, the classified postings are summarized into four views: hiring trend over time, geographic distribution of AI roles, seniority breakdown, and a map of where AI investment appears across different business areas and capability types.
 
----
+**Capability reports.** The investment signals from core AI roles are grouped into broader capability areas per company (e.g., fleet analytics, demand forecasting, industrial automation, materials research). These become the input for the research agent.
 
-## Companies and sectors
+**Research agent.** A Google deep research agent takes each company's capability report together with its annual report, and searches public sources (press releases, company pages, leadership interviews, investor communications) to expand and contextualize the hiring signals. The output is one structured company report per firm, organized into: quantitative investment baseline, capability by capability analysis, talent and operating model, and strategic priorities.
 
-NACE 22.11, 22.19, 29.32 (tyres, rubber products, motor vehicle parts). Firms include Michelin, Bridgestone, BASF, Adient, BorgWarner, Dana, Trelleborg, Continental, and others.
+**Evaluation.** Each company report is evaluated for factual accuracy. The benchmark extracts every claim citing a public URL, crawls the cited source with Crawl4AI, selects the most relevant passages using TF-IDF similarity, and uses an LLM judge (Gemini Pro) to classify each claim as supported, needs_review, unsupported, or not_verifiable.
+
+<p align="center">
+  <img src="docs/evaluation-workflow.png" alt="Evaluation workflow" width="700">
+</p>
+
+**RAG chatbot.** The evaluated reports are embedded with multilingual-e5-small and indexed so they can be queried in natural language to compare companies, technologies, and sector trends.
 
 ---
 
-## Literature review covers
+## Evaluation results
 
-- Predictive maintenance (PCA, UMAP, LSTMs)
-- Visual quality control (CNNs)
-- Molecular/materials discovery (GNNs, GNoME)
-- Hybrid models and digital twins
-- LLMs in manufacturing (safety chatbots, Text-to-CAD, material property prediction)
-- RAG (SOP generation, machine manual Q&A, MOF band gap optimization)
-- Agentic AI (self-driving labs, autonomous reaction optimization, plant diagnostics)
+392 public source claims were examined across the batch of company reports:
+
+| Metric | Result |
+|--------|--------|
+| Claims judged | 292 |
+| Supported | 174 |
+| Needs review | 75 |
+| Unsupported | 43 |
+| Not verifiable | 100 |
+| Grounding accuracy | 72.4% |
+| Strict support rate | 59.6% |
+| Unsupported rate | 14.7% |
+| Verifiability rate | 74.5% |
+
+---
+
+## Limitations
+
+Job postings signal a willingness to develop a capability, without demonstrating actual internal deployment. Some activities may also be understated as companies may not want to disclose them. In the absence of confirmation from sources such as investor disclosures, patents, or other formal documents, the results should not be interpreted as evidence of implementation.
+
+---
+
+## Companies analyzed
+
+Michelin, Bridgestone, BASF, Adient, BorgWarner, Dana, Trelleborg, Continental, and others. All matched to their global corporate group for worldwide coverage.
 
 ---
 
 ## Replication
 
-The pipeline code is not in this repo (uses proprietary data). Chapter 3 describes the full architecture, prompts, and evaluation methodology. To replicate:
-
-1. Get job posting data (TheirStack or similar)
-2. Classify with the schema in Section 3.2
-3. Run the evaluation benchmark (Section 3.3)
-4. Index in any RAG framework (thesis used multilingual-e5-small)
+The pipeline code is not included in this repository (uses proprietary data from TheirStack). The full architecture, prompts, classification schema, and evaluation methodology are described in Chapter 3 of the thesis.
